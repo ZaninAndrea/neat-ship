@@ -20,7 +20,18 @@ MAX_STOCK = 3
 RECHARGE_TIME = 1
 BASE_HEALTH = 100
 BULLET_DAMAGE = 5
-DELTA_MULTIPLIER = 5
+DELTA_MULTIPLIER = 1
+
+
+def center(ships, screen):
+    if len(ships) == 2:
+        x = ((ships[0].x + ships[1].x) / 2)-(screen.get_width() / 2)
+        y = ((ships[0].y + ships[1].y) / 2)-(screen.get_height() / 2)
+    else:
+        x = ships[0].x + (screen.get_width() / 2)
+        y = ships[0].y + (screen.get_height() / 2)
+
+    return (x, y)
 
 
 def distance(a, b):
@@ -88,12 +99,12 @@ class Ship:
             self.bullet_stock -= 1
             self.time_to_recharge = RECHARGE_TIME
 
-    def render(self, screen):
+    def render(self, screen, center_x, center_y):
         theta = 90 + self.theta
 
         rotated_image = pygame.transform.rotate(ship_image, theta)
-        screen.blit(rotated_image, (self.x - rotated_image.get_width() /
-                                    2, self.y - rotated_image.get_height() / 2), )
+        screen.blit(rotated_image, (self.x - center_x - rotated_image.get_width() /
+                                    2, self.y - center_y - rotated_image.get_height() / 2), )
 
 
 class Bullet:
@@ -112,13 +123,13 @@ class Bullet:
         self.x = self.x + self.v * np.cos(self.theta * pi / 180) * delta
         self.y = self.y - self.v * np.sin(self.theta * pi / 180) * delta
 
-    def render(self, screen):
+    def render(self, screen, center_x, center_y):
         theta = self.theta - 90
 
         bullet_image = red_bullet_image if self.color == "red" else blue_bullet_image
         rotated_image = pygame.transform.rotate(bullet_image, theta)
-        screen.blit(rotated_image, (self.x - rotated_image.get_width() /
-                                    2, self.y - rotated_image.get_height() / 2), )
+        screen.blit(rotated_image, (self.x - center_x - rotated_image.get_width() /
+                                    2, self.y - center_y - rotated_image.get_height() / 2), )
 
 
 def simulation(genome1, genome2, config,  render=False):
@@ -127,8 +138,10 @@ def simulation(genome1, genome2, config,  render=False):
         pygame.display.set_caption("simulation")
         screen = pygame.display.set_mode((1080, 720))
 
-    ship1 = Ship(270, 180, "red", genome1, config)
-    ship2 = Ship(100, 100, "blue", genome2, config)
+    ship1 = Ship(np.random.randint(100, 980), np.random.randint(
+        100, 620), "red", genome1, config)
+    ship2 = Ship(np.random.randint(100, 980), np.random.randint(
+        100, 620), "blue", genome2, config)
 
     ship1.set_enemy(ship2)
     ship2.set_enemy(ship1)
@@ -155,6 +168,7 @@ def simulation(genome1, genome2, config,  render=False):
             for j, bullet in enumerate(bullets):
                 if distance(bullet, ship) <= 30 and bullet.owner != ship:
                     bullet.owner.genome.fitness += 1
+                    ship.genome.fitness -= 1
                     ship.health -= bullet.damage
                     if ship.health <= 0:
                         ship.die()
@@ -172,12 +186,13 @@ def simulation(genome1, genome2, config,  render=False):
                 del bullets[i]
 
         if render:
+            (center_x, center_y) = center(ships, screen)
             screen.blit(background_image, (0, 0))
             for ship in ships:
-                ship.render(screen)
+                ship.render(screen, center_x, center_y)
 
             for bullet in bullets:
-                bullet.render(screen)
+                bullet.render(screen, center_x, center_y)
 
             pygame.display.flip()
 
