@@ -6,12 +6,12 @@ import neat
 
 
 ship_image = pygame.transform.scale(pygame.image.load(
-    "./PNG/Sprites/Ships/spaceShips_001.png"), (50, 50))
+    "./PNG/spaceShips_001.png"), (50, 50))
 red_bullet_image = pygame.transform.scale(pygame.image.load(
-    "./PNG/Sprites/Missiles/spaceMissiles_015.png"), (8, 19))
+    "./PNG/spaceMissiles_015.png"), (8, 19))
 blue_bullet_image = pygame.transform.scale(pygame.image.load(
-    "./PNG/Sprites/Missiles/spaceMissiles_016.png"), (8, 19))
-background_image = pygame.image.load("./PNG/Sprites/background.png")
+    "./PNG/spaceMissiles_016.png"), (8, 19))
+background_image = pygame.image.load("./PNG/background.png")
 
 ships = []
 bullets = []
