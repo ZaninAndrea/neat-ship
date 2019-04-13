@@ -50,10 +50,10 @@ def run(config_file):
     p.add_reporter(stats)
     p.add_reporter(neat.Checkpointer(50))
 
-    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-50')
-    winner = p.run(eval_genomes, 1)
+    # p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-50')
+    # winner = p.run(eval_genomes, 1)
 
-    simulation(winner, winner, config, True)
+    # simulation(winner, winner, config, True)
 
     # Run for up to 300 generations.
     winner = p.run(eval_genomes, 300)
