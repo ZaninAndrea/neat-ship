@@ -8,6 +8,7 @@ import neat
 import visualize
 from simulation import simulation
 import progressbar
+from random import sample
 
 
 def pairs(l):
@@ -16,19 +17,26 @@ def pairs(l):
         yield l[i:i + 2]
 
 
+ROUNDS = 10
+
+
 def eval_genomes(genomes, config):
     i = 0
-    with progressbar.ProgressBar(max_value=75) as bar:
-        for pair in pairs(genomes):
-            bar.update(i)
-            i += 1
-            if len(pair) == 2:
-                [(_, genome1), (_, genome2)] = pair
-                simulation(genome1, genome2, config)
-            else:
-                [(_, genome)] = pair
-                simulation(genome, genome, config)
-                genome.fitness = genome.fitness / 2
+    for _, genome in genomes:
+        genome.fitness = 0
+
+    with progressbar.ProgressBar(max_value=75 * ROUNDS) as bar:
+        for _ in range(ROUNDS):
+            for pair in pairs(sample(genomes, len(genomes))):
+                bar.update(i)
+                i += 1
+                if len(pair) == 2:
+                    [(_, genome1), (_, genome2)] = pair
+                    simulation(genome1, genome2, config)
+                else:
+                    [(_, genome)] = pair
+                    simulation(genome, genome, config)
+                    genome.fitness = genome.fitness / 2
 
 
 def run(config_file):

@@ -31,7 +31,6 @@ class Ship:
     def __init__(self, x, y, color, genome, config):
         self.genome = genome
         self.net = neat.nn.FeedForwardNetwork.create(genome, config)
-        self.genome.fitness = 0
 
         self.x = x
         self.y = y
