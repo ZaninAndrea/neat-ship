@@ -21,22 +21,18 @@ ROUNDS = 10
 
 
 def eval_genomes(genomes, config):
-    i = 0
     for _, genome in genomes:
         genome.fitness = 0
 
-    with progressbar.ProgressBar(max_value=75 * ROUNDS) as bar:
-        for _ in range(ROUNDS):
-            for pair in pairs(sample(genomes, len(genomes))):
-                bar.update(i)
-                i += 1
-                if len(pair) == 2:
-                    [(_, genome1), (_, genome2)] = pair
-                    simulation(genome1, genome2, config)
-                else:
-                    [(_, genome)] = pair
-                    simulation(genome, genome, config)
-                    genome.fitness = genome.fitness / 2
+    for _ in range(ROUNDS):
+        for pair in pairs(sample(genomes, len(genomes))):
+            if len(pair) == 2:
+                [(_, genome1), (_, genome2)] = pair
+                simulation(genome1, genome2, config)
+            else:
+                [(_, genome)] = pair
+                simulation(genome, genome, config)
+                genome.fitness = genome.fitness / 2
 
 
 def run(config_file):
@@ -53,6 +49,11 @@ def run(config_file):
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
     p.add_reporter(neat.Checkpointer(50))
+
+    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-50')
+    winner = p.run(eval_genomes, 1)
+
+    simulation(winner, winner, config, True)
 
     # Run for up to 300 generations.
     winner = p.run(eval_genomes, 300)
