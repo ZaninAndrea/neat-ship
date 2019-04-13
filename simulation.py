@@ -1,5 +1,5 @@
 import pygame
-from time import sleep, time, time_ns
+from time import sleep, time
 from math import pi
 import numpy as np
 import neat
