@@ -12,7 +12,7 @@ def run(config_file):
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          config_file)
-    p = neat.Checkpointer.restore_checkpoint('neat-checkpoint-244')
+    p = neat.Checkpointer.restore_checkpoint('checkpoint')
 
     genomes = list(p.population.values())
     genomes = [genome for genome in genomes if genome.fitness is not None]
